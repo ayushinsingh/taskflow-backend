@@ -21,6 +21,6 @@ router.patch("/tasks/:taskId", updateTask);
 router.delete("/tasks/:taskId", deleteTask);
 
 router.post("/subtasks", createSubtask);
-router.patch("/subtasks/:subtaskId", toggleSubtask);
+router.patch("/subtasks/:subtaskId/toggle", toggleSubtask);
 
 export default router;
