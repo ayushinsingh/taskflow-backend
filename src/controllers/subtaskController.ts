@@ -52,12 +52,3 @@ export const toggleSubtask = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error occurred while creating subtask." });
   }
 }
-
-// curl -X POST http://localhost:5000/api/boards/subtasks \
-//   -H "Content-Type: application/json" \
-//   -d '{
-//   "title": "New Subtask",
-//   "taskId": "e66b0938-0d98-4d7c-96e5-399d682f6cce"
-// }'
-// curl -X PATCH http://localhost:5000/api/boards/subtasks/00e793ba-ab04-4318-be47-787256a9bfac \
-//   -H "Content-Type: application/json" 

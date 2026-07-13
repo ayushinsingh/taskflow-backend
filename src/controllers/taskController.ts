@@ -61,7 +61,7 @@ export const updateTask = async (req: Request, res: Response) => {
         position: position !== undefined ? position : existingTask.position
       }
     })
-    res.status(200).json(updateTask);
+    res.status(200).json(updatedTask);
   } catch (error) {
     console.error("❌ Error updating task:", error);
     res.status(500).json({ error: "Internal server error" })
@@ -82,9 +82,33 @@ export const deleteTask = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Task successfully deleted from the board." });
   } catch (error) {
     console.error("❌ Error deleting task:", error);
-    res.status(500).json({ error: "Internal Server Error" })
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+export const reorderTasks = async (req: Request, res: Response) => {
+  try {
+    const { tasks } = req.body;
+    if (!tasks || !Array.isArray(tasks)) {
+      return res.status(400).json({ error: "An array of tasks is required." });
+    }
+
+    await prisma.$transaction(tasks.map((task: { id: string; position: number; columnId: string }) => (
+      prisma.task.update({
+        where: { id: task.id },
+        data: {
+          position: task.position,
+          columnId: task.columnId
+        }
+      })
+    )))
+    res.status(200).json({ message: "Tasks reodered successfully" });
+  } catch (error) {
+    console.log("❌ Error reordering task:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
 
 // curl -X POST http://localhost:5000/api/boards/tasks \
 //   -H "Content-Type: application/json" \
