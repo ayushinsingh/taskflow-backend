@@ -23,10 +23,10 @@ export const createTask = async (req: Request, res: Response) => {
       },
     });
 
-    return res.status(201).json(newTask);
+    res.status(201).json(newTask);
   } catch (error) {
     console.error("❌ Error creating task:", error);
-    return res.status(500).json({ error: "Internal server error occurred while creating task." });
+    res.status(500).json({ error: "Internal server error occurred while creating task." });
   }
 }
 
@@ -61,10 +61,10 @@ export const updateTask = async (req: Request, res: Response) => {
         position: position !== undefined ? position : existingTask.position
       }
     })
-    return res.status(200).json(updateTask);
+    res.status(200).json(updateTask);
   } catch (error) {
     console.error("❌ Error updating task:", error);
-    return res.status(500).json({ error: "Internal server error" })
+    res.status(500).json({ error: "Internal server error" })
   }
 }
 
@@ -79,9 +79,10 @@ export const deleteTask = async (req: Request, res: Response) => {
         id: taskId
       }
     })
-    return res.status(200).json({ message: "Task successfully deleted from the board." });
+    res.status(200).json({ message: "Task successfully deleted from the board." });
   } catch (error) {
-    return res.status(500).json({ error: "Internal Server Error" })
+    console.error("❌ Error deleting task:", error);
+    res.status(500).json({ error: "Internal Server Error" })
   }
 }
 
