@@ -15,7 +15,7 @@ app.use("/auth", authRouter);
 app.use(authMiddleware);
 app.use("/api/workspaces", workspaceRouter);
 app.use("/api/boards/", boardRouter);
-app.use("/api/invitations/", inviationRouter);
+app.use("/api/invitations", inviationRouter);
 app.use(errorMiddleware);
 
 app.listen(PORT, () => {
