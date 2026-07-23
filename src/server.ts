@@ -4,6 +4,7 @@ import boardRouter from "./routes/boardRoutes.ts";
 import authRouter from "./auth/auth.routes.ts";
 import { errorMiddleware } from "./middleware/error.middleware.ts";
 import workspaceRouter from "./workspace/workspace.routes.ts";
+import inviationRouter from "./invitation/invitation.routes.ts";
 import { authMiddleware } from "./middleware/auth.middleware.ts";
 const app = express();
 const PORT = 5000;
@@ -13,7 +14,8 @@ app.use(express.json());
 app.use("/auth", authRouter);
 app.use(authMiddleware);
 app.use("/api/workspaces", workspaceRouter);
-app.use("/api/boards/", boardRouter)
+app.use("/api/boards/", boardRouter);
+app.use("/api/invitations/", inviationRouter);
 app.use(errorMiddleware);
 
 app.listen(PORT, () => {
