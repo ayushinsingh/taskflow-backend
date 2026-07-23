@@ -9,3 +9,11 @@ export interface CreateWorkspaceDto {
   name: string;
   userId: string;
 }
+
+export const getWorkspacesSchema = z.object({
+  id: z.string().min(1)
+})
+
+export interface GetWorkspacesDto {
+  id: string;
+}

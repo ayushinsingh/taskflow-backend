@@ -14,6 +14,7 @@ export interface CreateInvitationDto {
   role: Role,
   invitedById: string
 }
+
 export interface CheckPermissionForCreatingInvitation {
   workspaceId: string;
   invitedById: string

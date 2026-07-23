@@ -1,7 +1,7 @@
 import prisma from "../config/db.ts";
-import type { CheckPermissionForCreatingInvitation, CreateInvitationDto } from "./dto/createInvitation.schema.ts";
-import type { CreateWorkspaceDto } from "./dto/createWorkspace.schema.ts";
-import type { GetWorkspacesDto } from "./dto/getWorkspaces.schema.ts";
+import type { CheckPermissionForCreatingInvitation, CreateInvitationDto } from "./dto/invitation.schema.ts";
+import type { CreateWorkspaceDto } from "./dto/workspace.schema.ts";
+import type { GetWorkspacesDto } from "./dto/workspace.schema.ts";
 
 export class WorkspaceService {
   async createWorkspaces(createWorkspaceDto: CreateWorkspaceDto) {
@@ -56,6 +56,6 @@ export class WorkspaceService {
         workspaceId: createInvitationDto.workspaceId
       }
     })
-    return invitation
+    return invitation;
   }
 }
