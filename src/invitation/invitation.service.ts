@@ -53,7 +53,7 @@ export class InvitationService {
       })
     ])
   }
-  async declineInvitation(id: string, userId: string, workspaceId: string, role: Role) {
+  async declineInvitation(id: string) {
     await prisma.invitation.update({
       where: {
         id

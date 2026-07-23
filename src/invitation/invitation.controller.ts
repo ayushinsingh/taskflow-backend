@@ -30,7 +30,7 @@ export class InvitationController {
     if (invitation?.email !== email) return res.status(403).json({message: "Forbidden"});
     if (invitation.status !== "PENDING") return res.status(409).json({ message: "already accepted/declined" });
 
-    await this.invitationService.declineInvitation(id, req.user.id, invitation.workspaceId, invitation.role);
+    await this.invitationService.declineInvitation(id);
     res.status(200).json({message: "Success"});
   }
   
