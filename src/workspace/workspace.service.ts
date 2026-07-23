@@ -1,4 +1,5 @@
 import prisma from "../config/db.ts";
+import type { CheckPermissionForCreatingInvitation, CreateInvitationDto } from "./dto/createInvitation.schema.ts";
 import type { CreateWorkspaceDto } from "./dto/createWorkspace.schema.ts";
 import type { GetWorkspacesDto } from "./dto/getWorkspaces.schema.ts";
 
@@ -14,7 +15,7 @@ export class WorkspaceService {
           }
         }
       },
-      include: {memberships: true}
+      include: { memberships: true }
     })
     return workspace;
   }
@@ -22,7 +23,7 @@ export class WorkspaceService {
     const workspaces = await prisma.workspace.findMany({
       where: {
         memberships: {
-          some: {userId: getWorkspaceDto.id}
+          some: { userId: getWorkspaceDto.id }
         }
       },
       include: {
@@ -30,5 +31,31 @@ export class WorkspaceService {
       }
     })
     return workspaces;
+  }
+
+  async checkPermissionForCreatingInvitation(checkPermissionForCreatingInvitation: CheckPermissionForCreatingInvitation) {
+    const membership = await prisma.membership.findFirst({
+      where: {
+        userId: checkPermissionForCreatingInvitation.invitedById,
+        workspaceId: checkPermissionForCreatingInvitation.workspaceId,
+        role: {
+          in: ["OWNER", "ADMIN"]
+        }
+      }
+    })
+    if (membership) return true;
+    return false;
+  }
+
+  async createInvitation(createInvitationDto: CreateInvitationDto) {
+    const invitation = await prisma.invitation.create({
+      data: {
+        role: createInvitationDto.role,
+        invitedById: createInvitationDto.invitedById,
+        email: createInvitationDto.email,
+        workspaceId: createInvitationDto.workspaceId
+      }
+    })
+    return invitation
   }
 }
