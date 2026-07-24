@@ -47,6 +47,18 @@ export class WorkspaceService {
     return false;
   }
 
+  async getMembershipByEmailAndWorkspaceId(email: string, workspaceId: string) {
+    const existing = await prisma.membership.findFirst({
+      where: {
+        workspaceId,
+        user: {
+          email
+        }
+      }
+    })
+    return existing;
+  }
+
   async createInvitation(createInvitationDto: CreateInvitationDto) {
     const invitation = await prisma.invitation.create({
       data: {

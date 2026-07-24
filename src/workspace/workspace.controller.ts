@@ -25,6 +25,8 @@ export class WorkspaceController {
     if (!email) return res.status(400).json({ message: "Invalid request body" });
     const isAdmin = await this.workspaceService.checkPermissionForCreatingInvitation({ invitedById: id, workspaceId });
     if (!isAdmin) return res.status(403).json({ message: "You are not allowed to invite anyone" });
+    const existing = await this.workspaceService.getMembershipByEmailAndWorkspaceId(email, workspaceId);
+    if(existing) return res.status(409).json({message: "User is already member"});
     const invitation = await this.workspaceService.createInvitation({ email, workspaceId, role: role || "MEMBER", invitedById: id });
     return res.status(201).json({ invitation });
   }

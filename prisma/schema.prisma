@@ -92,6 +92,7 @@ model Membership {
   workspaceId String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  @@unique([userId, workspaceId])
 }
 
 enum InvitationStatus {
