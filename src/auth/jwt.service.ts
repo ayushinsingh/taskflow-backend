@@ -5,7 +5,7 @@ interface AccessTokenPayload {
   userId: string;
 }
 const SECRET_KEY = process.env.JWT_SECRET;
-const TOKEN_EXPIRY_DURATION = "1h";
+const TOKEN_EXPIRY_DURATION = "1d";
 export class JwtService {
   generateAccessToken(userId: string) {
     if (!SECRET_KEY) throw new Error("Secret key not found in env file");

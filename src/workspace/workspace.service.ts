@@ -63,7 +63,7 @@ export class WorkspaceService {
     const invitation = await prisma.invitation.create({
       data: {
         role: createInvitationDto.role,
-        invitedById: createInvitationDto.invitedById,
+        invitedById: createInvitationDto.userId,
         email: createInvitationDto.email,
         workspaceId: createInvitationDto.workspaceId
       }

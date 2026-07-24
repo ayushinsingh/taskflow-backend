@@ -5,10 +5,7 @@ export const createWorkspaceSchema = z.object({
   userId: z.string()
 })
 
-export interface CreateWorkspaceDto {
-  name: string;
-  userId: string;
-}
+export type CreateWorkspaceDto = z.infer<typeof createWorkspaceSchema>
 
 export const getWorkspacesSchema = z.object({
   id: z.string().min(1)

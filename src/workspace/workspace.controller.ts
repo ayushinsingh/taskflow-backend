@@ -28,7 +28,7 @@ export class WorkspaceController {
     if (!isAdmin) throw new ForbiddenError();
     const existing = await this.workspaceService.getMembershipByEmailAndWorkspaceId(email, workspaceId);
     if (existing) throw new ConflictError("User is already member");
-    const invitation = await this.workspaceService.createInvitation({ email, workspaceId, role: role || "MEMBER", invitedById: id });
+    const invitation = await this.workspaceService.createInvitation({ email, workspaceId, role: role || "MEMBER", userId: id });
     return res.status(201).json({ invitation });
   }
 }

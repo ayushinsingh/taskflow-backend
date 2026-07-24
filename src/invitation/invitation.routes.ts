@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { InvitationController } from "./invitation.controller.ts";
+import { validate } from "../middleware/validate.middleware.ts";
+import { invitationParamsSchema } from "./dto/invitation.schema.ts";
 const invitationController = new InvitationController();
 const router = Router();
 router.get("/", invitationController.getInvitations.bind(invitationController));
-router.post("/:id/accept", invitationController.acceptInvitation.bind(invitationController));
-router.post("/:id/decline", invitationController.declineInvitation.bind(invitationController));
+router.post("/:id/accept", validate({params: invitationParamsSchema}), invitationController.acceptInvitation.bind(invitationController));
+router.post("/:id/decline", validate({params: invitationParamsSchema}), invitationController.declineInvitation.bind(invitationController));
 export default router;

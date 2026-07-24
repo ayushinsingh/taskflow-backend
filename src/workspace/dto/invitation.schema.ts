@@ -1,18 +1,18 @@
 import { z} from "zod";
-import type { Role } from "../../../generated/prisma/enums.ts";
 
-export const createInvitationSchema = z.object({
+export const createInvitationBodySchema = z.object({
   email: z.email(),
-  workspaceId: z.string(),
-  role: z.string(),
-  invitedById: z.string()
+  role: z.enum(["OWNER","ADMIN", "MEMBER"]).default("MEMBER")
+});
+
+
+export const createInvitationParamsSchema = z.object({
+  workspaceId: z.uuid()
 })
 
-export interface CreateInvitationDto {
-  email: string;
-  workspaceId: string;
-  role: Role,
-  invitedById: string
+type combinedInvitationType  = z.infer<typeof createInvitationBodySchema> & z.infer<typeof createInvitationParamsSchema>
+export interface CreateInvitationDto extends combinedInvitationType   {
+  userId: string
 }
 
 export interface CheckPermissionForCreatingInvitation {

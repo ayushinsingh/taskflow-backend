@@ -1,9 +1,9 @@
 import "dotenv/config";
 import prisma from "../config/db.ts";
 import bcrypt from 'bcrypt';
-import type { LoginDto, SignupDto } from "./dto/signup.schema.ts";
+import type { LoginDto, SignupDto } from "./dto/auth.schema.ts";
 import { JwtService } from "./jwt.service.ts";
-import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from "../errors/app-error.ts";
+import { BadRequestError, ConflictError, UnauthorizedError } from "../errors/app-error.ts";
 
 export class AuthService {
   private jwtSevice = new JwtService();

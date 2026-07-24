@@ -1,12 +1,13 @@
 import type { Role } from "../../generated/prisma/enums.ts";
 import prisma from "../config/db.ts";
 import { ConflictError, ForbiddenError, NotFoundError } from "../errors/app-error.ts";
+import type { AcceptInvitationDto, DeclineInvitationDto, GetActionableInvitationDto, GetInvitationsDto } from "./dto/invitation.schema.ts";
 
 export class InvitationService {
-  async getInvitations(email: string) {
+  async getInvitations(getInvitationsDto: GetInvitationsDto) {
     const invitations = await prisma.invitation.findMany({
       where: {
-        email,
+        email: getInvitationsDto.email,
         status: "PENDING"
       },
       include: {
@@ -26,24 +27,24 @@ export class InvitationService {
     return invitations;
   }
 
-  async getActionableInvitation(id: string, email: string) {
+  async getActionableInvitation(getActionableInvitation: GetActionableInvitationDto) {
     const invitation = await prisma.invitation.findUnique({
       where: {
-        id
+        id: getActionableInvitation.id
       }
     });
     if(!invitation) throw new NotFoundError("Invitation not found");
-    if (invitation.email !== email) throw new ForbiddenError();
+    if (invitation.email !== getActionableInvitation.email) throw new ForbiddenError();
     if (invitation.status !== "PENDING") throw new ConflictError("already accepted/declined");
 
     return invitation;
   }
 
-  async acceptInvitation(id: string, userId: string, workspaceId: string, role: Role) {
+  async acceptInvitation(accceptInvitationDto: AcceptInvitationDto) {
     await prisma.$transaction([
       prisma.invitation.update({
         where: {
-          id
+          id: accceptInvitationDto.id
         },
         data: {
           status: "ACCEPTED"
@@ -51,17 +52,17 @@ export class InvitationService {
       }),
       prisma.membership.create({
         data: {
-          userId,
-          workspaceId,
-          role
+          userId: accceptInvitationDto.userId,
+          workspaceId: accceptInvitationDto.userId,
+          role: accceptInvitationDto.role
         }
       })
     ])
   }
-  async declineInvitation(id: string) {
+  async declineInvitation(declineInvitationDto: DeclineInvitationDto) {
     await prisma.invitation.update({
       where: {
-        id
+        id: declineInvitationDto.id
       },
       data: {
         status: "DECLINED"
