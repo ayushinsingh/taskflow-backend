@@ -3,12 +3,13 @@ import prisma from "../config/db.ts";
 import bcrypt from 'bcrypt';
 import type { LoginDto, SignupDto } from "./dto/signup.schema.ts";
 import { JwtService } from "./jwt.service.ts";
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from "../errors/app-error.ts";
 
 export class AuthService {
   private jwtSevice = new JwtService();
   async signup(signupDto: SignupDto) {
     if (!signupDto.name || !signupDto.email || !signupDto.password) {
-      throw new Error("Name, email and password is required");
+      throw new BadRequestError("Name, email and password is required");
     }
     const existingUser = await prisma.user.findUnique({
       where: {
@@ -16,7 +17,7 @@ export class AuthService {
       }
     })
     if (existingUser) {
-      throw new Error("Email already exists")
+      throw new ConflictError("Email already exists")
     }
     const hashedPassword = await bcrypt.hash(signupDto.password, 10);
     const user = await prisma.user.create({
@@ -38,7 +39,7 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     if (!loginDto.email || !loginDto.password) {
-      throw new Error("Email and password is required");
+      throw new BadRequestError("Email and password is required");
     }
     const user = await prisma.user.findUnique({
       where: {
@@ -46,10 +47,10 @@ export class AuthService {
       }
     });
     if (!user) {
-      throw new Error("User Not Found");
+      throw new UnauthorizedError("Invalid credentials");
     }
     const isSame = await bcrypt.compare(loginDto.password, user.passwordHash);
-    if (!isSame) throw new Error("Wrong password");
+    if (!isSame) throw new UnauthorizedError("Invalid credentials");
     const userObject = {
       name: user.name,
       email: user.email,

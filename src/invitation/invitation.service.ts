@@ -1,5 +1,6 @@
 import type { Role } from "../../generated/prisma/enums.ts";
 import prisma from "../config/db.ts";
+import { ConflictError, ForbiddenError, NotFoundError } from "../errors/app-error.ts";
 
 export class InvitationService {
   async getInvitations(email: string) {
@@ -25,12 +26,16 @@ export class InvitationService {
     return invitations;
   }
 
-  async getInvitation(id: string) {
+  async getActionableInvitation(id: string, email: string) {
     const invitation = await prisma.invitation.findUnique({
       where: {
         id
       }
     });
+    if(!invitation) throw new NotFoundError("Invitation not found");
+    if (invitation.email !== email) throw new ForbiddenError();
+    if (invitation.status !== "PENDING") throw new ConflictError("already accepted/declined");
+
     return invitation;
   }
 

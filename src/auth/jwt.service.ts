@@ -1,13 +1,15 @@
 import "dotenv/config";
 import jwt from "jsonwebtoken";
+import { UnauthorizedError } from "../errors/app-error.ts";
 interface AccessTokenPayload {
   userId: string;
 }
 const SECRET_KEY = process.env.JWT_SECRET;
+const TOKEN_EXPIRY_DURATION = "1h";
 export class JwtService {
   generateAccessToken(userId: string) {
     if (!SECRET_KEY) throw new Error("Secret key not found in env file");
-    const token = jwt.sign({ userId }, SECRET_KEY, { expiresIn: "1h" });
+    const token = jwt.sign({ userId }, SECRET_KEY, { expiresIn: TOKEN_EXPIRY_DURATION });
     return token;
   }
   verifyAccessToken(token: string): AccessTokenPayload {
@@ -17,9 +19,9 @@ export class JwtService {
       return payload;
     } catch(error: any) {
       if(error instanceof Error && error.name === 'TokenExpiredError') {
-        throw new Error("TOKEN_EXPIRED")
+        throw new UnauthorizedError("Session expired, please login again")
       }
-      throw new Error("INVALID_TOKEN");
+      throw new UnauthorizedError("Invalid token");
     }
   }
 }
