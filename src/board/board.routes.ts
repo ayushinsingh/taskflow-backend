@@ -1,4 +1,4 @@
-import Router from "express";
+import { Router } from "express";
 import { BoardController } from "./board.controller.ts";
 import { validate } from "../middleware/validate.middleware.ts";
 import { boardParamsSchema, createBoardSchema } from "./dto/board.schema.ts";
@@ -25,7 +25,7 @@ router.patch("/columns/reorder", validate({ body: reorderColumnSchema }), column
 router.patch("/columns/", validate({ body: updateColumnSchema }), columnController.updateColumn.bind(columnController));
 
 router.post("/tasks", validate({ body: createTaskSchema }), taskController.createTask.bind(taskController));
-router.patch("/tasks/reorder", validate({ body: reorderTasksSchema }), taskController.updateTask.bind(taskController));
+router.patch("/tasks/reorder", validate({ body: reorderTasksSchema }), taskController.reorderTask.bind(taskController));
 router.patch("/tasks/:id", validate({ params: taskParamsSchema, body: updateTaskSchema }), taskController.updateTask.bind(taskController));
 router.delete("/tasks/:id", validate({ params: taskParamsSchema }), taskController.deleteTask.bind(taskController));
 

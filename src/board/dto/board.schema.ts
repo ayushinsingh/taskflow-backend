@@ -8,5 +8,5 @@ export const createBoardSchema = z.object({
 export type CreateBoardDTO = z.infer<typeof createBoardSchema>;
 
 export const boardParamsSchema = z.object({
-  boardId: z.uuid()
+  id: z.uuid()
 })

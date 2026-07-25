@@ -43,11 +43,18 @@ model Column {
   tasks     Task[]
 }
 
+enum Priority {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+}
+
 model Task {
   id          String    @id @default(uuid())
   title       String
   description String?   @db.Text
-  priority    String    @default("medium")
+  priority    Priority  @default(MEDIUM)
   position    Int
   columnId    String
   createdAt   DateTime  @default(now())
@@ -92,6 +99,7 @@ model Membership {
   workspaceId String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
   @@unique([userId, workspaceId])
 }
 

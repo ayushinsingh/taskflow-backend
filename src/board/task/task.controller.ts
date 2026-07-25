@@ -16,6 +16,7 @@ export class TaskController {
 
   async deleteTask(req:Request, res: Response) {
     await this.taskService.deleteTask(req.params.id as string);
+    res.status(200).json({message: "success"});
   }
 
   async reorderTask(req:Request, res: Response) {

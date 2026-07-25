@@ -6,7 +6,7 @@ export class ColumnController {
 
   async createColumn(req: Request, res: Response) {
     const column = await this.columnService.createColumn(req.body);
-    return res.json(column);
+    return res.status(201).json(column);
   }
 
   async deleteColumn(req: Request, res: Response) {
