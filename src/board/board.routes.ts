@@ -8,6 +8,7 @@ import { columnParamsSchema, createColumnSchema, reorderColumnSchema, updateColu
 import { createTaskSchema, reorderTasksSchema, taskParamsSchema, updateTaskSchema } from "./task/dto/task.schema.ts";
 import { SubtaskController } from "./subtask/subtask.controller.ts";
 import { createSubtaskSchema, subtaskParamsSchema } from "./subtask/dto/subtask.schema.ts";
+import { requireWorkspaceAccess, requireWorkspaceAccessBatch } from "../middleware/access.middleware.ts";
 
 const router = Router();
 const boardController = new BoardController();
@@ -15,21 +16,21 @@ const columnController = new ColumnController();
 const taskController = new TaskController();
 const subtaskController = new SubtaskController();
 
-router.post("/", validate({ body: createBoardSchema }), boardController.createBoard.bind(boardController));
-router.get("/:id", validate({ params: boardParamsSchema }), boardController.getBoard.bind(boardController));
-router.delete("/:id", validate({ params: boardParamsSchema }), boardController.deleteBoard.bind(boardController));
+router.post("/", validate({ body: createBoardSchema }), requireWorkspaceAccess("workspace", "body", "workspaceId"), boardController.createBoard.bind(boardController));
+router.get("/:id", validate({ params: boardParamsSchema }), requireWorkspaceAccess("board", "params", "id"), boardController.getBoard.bind(boardController));
+router.delete("/:id", validate({ params: boardParamsSchema }), requireWorkspaceAccess("board", "params", "id"), boardController.deleteBoard.bind(boardController));
 
-router.post("/columns", validate({ body: createColumnSchema }), columnController.createColumn.bind(columnController));
-router.delete("/columns/:id", validate({ params: columnParamsSchema }), columnController.deleteColumn.bind(columnController));
-router.patch("/columns/reorder", validate({ body: reorderColumnSchema }), columnController.reorderColumns.bind(columnController));
-router.patch("/columns/", validate({ body: updateColumnSchema }), columnController.updateColumn.bind(columnController));
+router.post("/columns", validate({ body: createColumnSchema }), requireWorkspaceAccess("board", "body", "boardId"), columnController.createColumn.bind(columnController));
+router.delete("/columns/:id", validate({ params: columnParamsSchema }), requireWorkspaceAccess("column", "params", "id"), columnController.deleteColumn.bind(columnController));
+router.patch("/columns/reorder", validate({ body: reorderColumnSchema }), requireWorkspaceAccessBatch("column", "columns", "id"), columnController.reorderColumns.bind(columnController));
+router.patch("/columns/", validate({ body: updateColumnSchema }), requireWorkspaceAccess("column", "body", "id"), columnController.updateColumn.bind(columnController));
 
-router.post("/tasks", validate({ body: createTaskSchema }), taskController.createTask.bind(taskController));
-router.patch("/tasks/reorder", validate({ body: reorderTasksSchema }), taskController.reorderTask.bind(taskController));
-router.patch("/tasks/:id", validate({ params: taskParamsSchema, body: updateTaskSchema }), taskController.updateTask.bind(taskController));
-router.delete("/tasks/:id", validate({ params: taskParamsSchema }), taskController.deleteTask.bind(taskController));
+router.post("/tasks", validate({ body: createTaskSchema }), requireWorkspaceAccess("column", "body", "columnId"), taskController.createTask.bind(taskController));
+router.patch("/tasks/reorder", validate({ body: reorderTasksSchema }), requireWorkspaceAccessBatch("task", "tasks", "id"), taskController.reorderTask.bind(taskController));
+router.patch("/tasks/:id", validate({ params: taskParamsSchema, body: updateTaskSchema }), requireWorkspaceAccess("task", "params", "id"), taskController.updateTask.bind(taskController));
+router.delete("/tasks/:id", validate({ params: taskParamsSchema }), requireWorkspaceAccess("task", "params", "id"), taskController.deleteTask.bind(taskController));
 
-router.post("/subtasks", validate({ body: createSubtaskSchema }), subtaskController.createSubtask.bind(subtaskController));
-router.patch("/subtasks/:id/toggle", validate({ params: subtaskParamsSchema }), subtaskController.toggleSubtask.bind(subtaskController));
+router.post("/subtasks", validate({ body: createSubtaskSchema }), requireWorkspaceAccess("task", "body", "taskId"), subtaskController.createSubtask.bind(subtaskController));
+router.patch("/subtasks/:id/toggle", validate({ params: subtaskParamsSchema }), requireWorkspaceAccess("subtask", "params", "id"), subtaskController.toggleSubtask.bind(subtaskController));
 
 export default router;
