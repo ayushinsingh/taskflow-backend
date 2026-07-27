@@ -8,7 +8,7 @@ import { columnParamsSchema, createColumnSchema, reorderColumnSchema, updateColu
 import { createTaskSchema, reorderTasksSchema, taskParamsSchema, updateTaskSchema } from "./task/dto/task.schema.ts";
 import { SubtaskController } from "./subtask/subtask.controller.ts";
 import { createSubtaskSchema, subtaskParamsSchema } from "./subtask/dto/subtask.schema.ts";
-import { requireWorkspaceAccess, requireWorkspaceAccessBatch } from "../middleware/access.middleware.ts";
+import { requireWorkspaceAccess, requireSingleBoardAccess } from "../middleware/access.middleware.ts";
 
 const router = Router();
 const boardController = new BoardController();
@@ -22,11 +22,11 @@ router.delete("/:id", validate({ params: boardParamsSchema }), requireWorkspaceA
 
 router.post("/columns", validate({ body: createColumnSchema }), requireWorkspaceAccess("board", "body", "boardId"), columnController.createColumn.bind(columnController));
 router.delete("/columns/:id", validate({ params: columnParamsSchema }), requireWorkspaceAccess("column", "params", "id"), columnController.deleteColumn.bind(columnController));
-router.patch("/columns/reorder", validate({ body: reorderColumnSchema }), requireWorkspaceAccessBatch("column", "columns", "id"), columnController.reorderColumns.bind(columnController));
+router.patch("/columns/reorder", validate({ body: reorderColumnSchema }), requireSingleBoardAccess([{resource:"column", arrayKey: "columns", itemKey: "id"}]), columnController.reorderColumns.bind(columnController));
 router.patch("/columns/", validate({ body: updateColumnSchema }), requireWorkspaceAccess("column", "body", "id"), columnController.updateColumn.bind(columnController));
 
 router.post("/tasks", validate({ body: createTaskSchema }), requireWorkspaceAccess("column", "body", "columnId"), taskController.createTask.bind(taskController));
-router.patch("/tasks/reorder", validate({ body: reorderTasksSchema }), requireWorkspaceAccessBatch("task", "tasks", "id"), taskController.reorderTask.bind(taskController));
+router.patch("/tasks/reorder", validate({ body: reorderTasksSchema }), requireSingleBoardAccess([{resource: "task", arrayKey: "tasks", itemKey: "id"}, {resource: "column", arrayKey: "tasks", itemKey: "columnId"}]), taskController.reorderTask.bind(taskController));
 router.patch("/tasks/:id", validate({ params: taskParamsSchema, body: updateTaskSchema }), requireWorkspaceAccess("task", "params", "id"), taskController.updateTask.bind(taskController));
 router.delete("/tasks/:id", validate({ params: taskParamsSchema }), requireWorkspaceAccess("task", "params", "id"), taskController.deleteTask.bind(taskController));
 

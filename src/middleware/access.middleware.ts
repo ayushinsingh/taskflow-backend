@@ -24,58 +24,40 @@ export const requireWorkspaceAccess =
       next();
     };
 
-const batchResolver = {
+const boardResolvers = {
   column: (ids: string[]) => prisma.column.findMany({
-    where: {
-      id: {
-        in: ids
-      }
-    },
-    select: {
-      board: {
-        select: {
-          workspaceId: true
-        }
-      }
-    }
-  }).then(rows => rows.map(r => r.board.workspaceId)),
+    where: { id: { in: ids } },
+    select: { board: { select: { id: true, workspaceId: true } } },
+  }).then(rows => rows.map(r => r.board)),   // [{ id: boardId, workspaceId }]
   task: (ids: string[]) => prisma.task.findMany({
-    where: {
-      id: {
-        in: ids
-      }
-    },
-    select: {
-      column: {
-        select: {
-          board: {
-            select: {
-              workspaceId: true
-            }
-          }
-        }
-      }
-    }
-  }).then(rows => rows.map(r => r.column.board.workspaceId)),
+    where: { id: { in: ids } },
+    select: { column: { select: { board: { select: { id: true, workspaceId: true } } } } },
+  }).then(rows => rows.map(r => r.column.board)),
 };
 
-export const requireWorkspaceAccessBatch =
-  (resource: keyof typeof batchResolver, arrayKey: string, itemIdKey = "id") =>
-    async (req: Request, res: Response, next: NextFunction) => {
-      const ids: string[] = req.body[arrayKey].map((item: any) => item[itemIdKey]);
-      const workspaceIds = await batchResolver[resource](ids);
+type Group = { resource: keyof typeof boardResolvers; arrayKey: string; itemKey: string };
 
-      if (workspaceIds.length !== ids.length) throw new NotFoundError("Some items not found");
-      const distinct = new Set(workspaceIds);
-      const [workspaceId] = distinct;
-      if (distinct.size !== 1 || !workspaceId) throw new ForbiddenError("Reorder must be within one workspace");
-      
-      const member = await prisma.membership.findUnique({
-        where: {
-          userId_workspaceId: { userId: req.user.id, workspaceId: workspaceId }
-        }
-      });
-      if(!member) throw new ForbiddenError();
+export const requireSingleBoardAccess =
+  (groups: Group[]) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    const boards: { id: string; workspaceId: string }[] = [];
 
-      next();
-    };
+    for (const g of groups) {
+      const ids = req.body[g.arrayKey].map((item: any) => item[g.itemKey]);
+      const resolved = await boardResolvers[g.resource](ids);
+      if (resolved.length !== new Set(ids).size) throw new NotFoundError("Some items not found");
+      boards.push(...resolved);
+    }
+
+    const distinctBoards = new Set(boards.map(b => b.id));
+    if (distinctBoards.size !== 1) throw new ForbiddenError("Reorder must be within one board");
+
+    const workspaceId = boards[0]?.workspaceId;
+    if (!workspaceId) throw new ForbiddenError();
+    const member = await prisma.membership.findUnique({
+      where: { userId_workspaceId: { userId: req.user.id, workspaceId } },
+    });
+    if (!member) throw new ForbiddenError();
+    next();
+  };
+
