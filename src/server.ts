@@ -20,6 +20,5 @@ app.use("/api/invitations", inviationRouter);
 app.use(errorMiddleware);
 
 app.listen(PORT, () => {
-  console.log(`\n🪐 [SERVER RUNNING]: Open your browser and navigate to http://localhost:${PORT}`);
-  console.log(`👉 Test the API data dump directly at http://localhost:${PORT}/api/boards/\n`);
+  console.log(`\n🪐 [SERVER RUNNING]: Open your postman and hit request to http://localhost:${PORT}`);
 })

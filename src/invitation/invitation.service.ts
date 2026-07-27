@@ -53,7 +53,7 @@ export class InvitationService {
       prisma.membership.create({
         data: {
           userId: accceptInvitationDto.userId,
-          workspaceId: accceptInvitationDto.userId,
+          workspaceId: accceptInvitationDto.workspaceId,
           role: accceptInvitationDto.role
         }
       })
