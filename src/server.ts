@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import authRouter from "./auth/auth.routes.ts";
@@ -8,7 +9,7 @@ import { errorMiddleware } from "./middleware/error.middleware.ts";
 import { authMiddleware } from "./middleware/auth.middleware.ts";
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT ?? 5000;
 
 app.use(cors());
 app.use(express.json());
