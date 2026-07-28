@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import type { LoginDto, SignupDto } from "./dto/auth.schema.ts";
 import { JwtService } from "./jwt.service.ts";
 import { BadRequestError, ConflictError, UnauthorizedError } from "../errors/app-error.ts";
+import { use } from "react";
 
 export class AuthService {
   private jwtSevice = new JwtService();
@@ -27,14 +28,10 @@ export class AuthService {
         passwordHash: hashedPassword
       }
     });
-    const newUser = {
-      id: user.id,
-      name: user.name,
-      email: user.email
-    }
+    const { id, name, email } = user;
 
-    const token = this.jwtSevice.generateAccessToken(newUser.id);
-    return { user: newUser, accessToken: token }
+    const token = this.jwtSevice.generateAccessToken(id);
+    return { user: { id, name, email }, accessToken: token }
   }
 
   async login(loginDto: LoginDto) {
@@ -51,16 +48,12 @@ export class AuthService {
     }
     const isSame = await bcrypt.compare(loginDto.password, user.passwordHash);
     if (!isSame) throw new UnauthorizedError("Invalid credentials");
-    const userObject = {
-      name: user.name,
-      email: user.email,
-      id: user.id
-    }
+    const { id, name, email } = user;
 
     const token = this.jwtSevice.generateAccessToken(user.id);
 
     return {
-      user: userObject,
+      user: { id, name, email },
       accessToken: token
     }
   }

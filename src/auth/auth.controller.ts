@@ -14,4 +14,9 @@ export class AuthController {
     res.status(200).json(result);
   }
 
+  async me(req:Request, res: Response) {
+    const { id, name, email } = req.user;
+    return res.status(200).json({user: {id, name, email}});
+  }
+
 }
