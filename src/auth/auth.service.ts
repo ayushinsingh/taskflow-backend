@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import type { LoginDto, SignupDto } from "./dto/auth.schema.ts";
 import { JwtService } from "./jwt.service.ts";
 import { BadRequestError, ConflictError, UnauthorizedError } from "../errors/app-error.ts";
-import { use } from "react";
 
 export class AuthService {
   private jwtSevice = new JwtService();
