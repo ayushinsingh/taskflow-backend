@@ -1,11 +1,12 @@
 import type { Request, Response } from "express";
 import { InvitationService } from "./invitation.service.ts";
 import { BadRequestError } from "../errors/app-error.ts";
+import type { InvitationStatus } from "../../generated/prisma/enums.ts";
 
 export class InvitationController {
   private invitationService = new InvitationService();
   async getInvitations(req: Request, res: Response) {
-    const invitations = await this.invitationService.getInvitations({ email: req.user.email })
+    const invitations = await this.invitationService.getInvitations({ email: req.user.email, status: req.query.status as InvitationStatus })
     return res.status(200).json({ invitations });
   }
   async acceptInvitation(req: Request, res: Response) {

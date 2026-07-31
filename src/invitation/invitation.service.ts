@@ -8,12 +8,13 @@ export class InvitationService {
     const invitations = await prisma.invitation.findMany({
       where: {
         email: getInvitationsDto.email,
-        status: "PENDING"
+        status: getInvitationsDto.status ?? "PENDING"
       },
       include: {
         invitedBy: {
           select: {
-            name: true
+            name: true,
+            email: true
           }
         },
         workspace: {
