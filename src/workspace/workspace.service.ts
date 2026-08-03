@@ -27,7 +27,15 @@ export class WorkspaceService {
         }
       },
       include: {
-        boards: true
+        boards: true,
+        memberships: {
+          where: {
+            userId: getWorkspaceDto.id
+          },
+          select: {
+            role: true
+          }
+        }
       }
     })
     return workspaces;
