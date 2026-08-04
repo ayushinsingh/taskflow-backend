@@ -73,6 +73,14 @@ export class WorkspaceService {
         invitedById: createInvitationDto.userId,
         email: createInvitationDto.email,
         workspaceId: createInvitationDto.workspaceId
+      },
+      include: {
+        invitedBy: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
       }
     })
     return invitation;
