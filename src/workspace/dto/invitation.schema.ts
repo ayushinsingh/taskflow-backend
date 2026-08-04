@@ -6,11 +6,18 @@ export const createInvitationBodySchema = z.object({
 });
 
 
-export const createInvitationParamsSchema = z.object({
+export const workspaceParamsSchema = z.object({
   workspaceId: z.uuid()
 })
 
-type combinedInvitationType  = z.infer<typeof createInvitationBodySchema> & z.infer<typeof createInvitationParamsSchema>
+export const workspaceInvitationSchema = z.object({
+  workspaceId: z.uuid(),
+  id: z.uuid()
+});
+
+export type WorkspaceInvitationType = z.infer<typeof workspaceInvitationSchema>;
+
+type combinedInvitationType  = z.infer<typeof createInvitationBodySchema> & z.infer<typeof workspaceParamsSchema>
 export interface CreateInvitationDto extends combinedInvitationType   {
   userId: string
 }

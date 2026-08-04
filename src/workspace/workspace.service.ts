@@ -40,8 +40,7 @@ export class WorkspaceService {
     })
     return workspaces;
   }
-
-  async checkPermissionForCreatingInvitation(checkPermissionForCreatingInvitation: CheckPermissionForCreatingInvitation) {
+  async checkPermissionForMembershipOperations(checkPermissionForCreatingInvitation: CheckPermissionForCreatingInvitation) {
     const membership = await prisma.membership.findFirst({
       where: {
         userId: checkPermissionForCreatingInvitation.invitedById,
@@ -77,5 +76,50 @@ export class WorkspaceService {
       }
     })
     return invitation;
+  }
+
+  async getMembersByWorkspaceId(workspaceId: string) {
+    const membership = await prisma.membership.findMany({
+      where: {
+        workspaceId
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
+      }
+    });
+    return membership;
+  }
+
+  async getPendingInvitesForWorkspace(workspaceId: string) {
+    const invites = await prisma.invitation.findMany({
+      where: {
+        workspaceId,
+        status: "PENDING"
+      },
+      include: {
+        invitedBy: {
+          select:{
+            name:true,
+            email: true
+          }
+        }
+      }
+    })
+    return invites;
+  }
+
+  async revokeInviteForWorkspace(workspaceId: string, invitationId: string) {
+    await prisma.invitation.delete({
+      where: {
+        workspaceId,
+        id: invitationId,
+        status: "PENDING"
+      }
+    })
   }
 }

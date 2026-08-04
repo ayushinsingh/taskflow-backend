@@ -14,7 +14,7 @@ export function errorMiddleware(err: Error, req: Request, res: Response, next: N
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === "P2002") {
       return res.status(409).json({ message: "Resource already exists" });
-    }
+    } else if(err.code === "P2005") return res.status(403).json({ message: "Resource not found" });
   }
   return res.status(500).json({ message: "Internal server error" });
 }
