@@ -51,16 +51,20 @@ enum Priority {
 }
 
 model Task {
-  id          String    @id @default(uuid())
-  title       String
-  description String?   @db.Text
-  priority    Priority  @default(MEDIUM)
-  position    Int
-  columnId    String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  column      Column    @relation(fields: [columnId], references: [id], onDelete: Cascade)
-  subtasks    Subtask[]
+  id           String    @id @default(uuid())
+  title        String
+  description  String?   @db.Text
+  priority     Priority  @default(MEDIUM)
+  position     Int
+  columnId     String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  column       Column    @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  subtasks     Subtask[]
+  createdById  String
+  createdBy    User      @relation("TaskCreatedBy", fields: [createdById], references: [id])
+  assignedToId String?
+  assignedTo   User?     @relation("TaskAssignedTo", fields: [assignedToId], references: [id])
 }
 
 model Subtask {
@@ -83,6 +87,8 @@ model User {
   invitationsSent Invitation[]
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
+  createdTasks    Task[]       @relation("TaskCreatedBy")
+  assignedTasks   Task[]       @relation("TaskAssignedTo")
 }
 
 enum Role {

@@ -5,12 +5,12 @@ export class TaskController {
   private taskService = new TaskService();
 
   async createTask(req: Request, res: Response) {
-    const task = await this.taskService.createTask(req.body);
+    const task = await this.taskService.createTask({...req.body, createdById: req.user.id, workspaceId: req.workspaceId});
     return res.status(201).json(task);
   }
 
   async updateTask(req:Request, res: Response) {
-    const task = await this.taskService.updateTask({...req.body, ...req.params});
+    const task = await this.taskService.updateTask({...req.body, ...req.params, workspaceId: req.workspaceId});
     return res.status(200).json(task);
   }
 

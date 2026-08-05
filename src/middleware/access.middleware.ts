@@ -20,7 +20,7 @@ export const requireWorkspaceAccess =
         where: { userId_workspaceId: { userId: req.user.id, workspaceId } },
       });
       if (!member) throw new ForbiddenError();
-
+      req.workspaceId = workspaceId;
       next();
     };
 
