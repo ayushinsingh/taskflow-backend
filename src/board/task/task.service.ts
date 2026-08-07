@@ -20,7 +20,7 @@ export class TaskService {
         assignedToId: rest.assignedToId ?? null,
         position: count + 1
       },
-      select: {
+      include: {
         createdBy: {
           select: {
             name: true,
@@ -49,7 +49,7 @@ export class TaskService {
         id
       },
       data: data as Prisma.TaskUpdateInput,
-      select: {
+      include: {
         createdBy: {
           select: {
             name: true,
