@@ -16,6 +16,17 @@ export class BoardService {
     const board = await prisma.board.findUnique({
       where: {
         id
+      },
+      include: {
+        columns: {
+         include: {
+          tasks: {
+            include: {
+              subtasks: true
+            }
+          }
+         }
+        }
       }
     })
     return board;

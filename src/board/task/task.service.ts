@@ -17,7 +17,22 @@ export class TaskService {
     const task = await prisma.task.create({
       data: {
         ...rest,
+        assignedToId: rest.assignedToId ?? null,
         position: count + 1
+      },
+      select: {
+        createdBy: {
+          select: {
+            name: true,
+            email: true
+          }
+        },
+        assignedTo: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
       }
     })
     return task;
@@ -33,7 +48,21 @@ export class TaskService {
       where: {
         id
       },
-      data: data as Prisma.TaskUpdateInput
+      data: data as Prisma.TaskUpdateInput,
+      select: {
+        createdBy: {
+          select: {
+            name: true,
+            email: true
+          }
+        },
+        assignedTo: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
+      }
     })
     return updatedtask;
   }
