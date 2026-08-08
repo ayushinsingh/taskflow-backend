@@ -19,13 +19,17 @@ export class BoardService {
       },
       include: {
         columns: {
-         include: {
-          tasks: {
-            include: {
-              subtasks: true
+          orderBy: { position: "asc" },
+          include: {
+            tasks: {
+              orderBy: { position: "asc" },
+              include: {
+                subtasks: {
+                  orderBy: { position: "asc" }
+                }
+              }
             }
           }
-         }
         }
       }
     })
