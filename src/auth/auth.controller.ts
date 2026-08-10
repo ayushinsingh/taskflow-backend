@@ -33,7 +33,7 @@ export class AuthController {
   }
 
   async logout(_req:Request, res: Response) {
-    const isProd = process.env.NODE_ENVIROMENT === "production";
+    const isProd = process.env.NODE_ENV === "production";
     res.clearCookie("accessToken", {
       httpOnly: true,
       secure: isProd,
