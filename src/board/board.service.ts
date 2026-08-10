@@ -24,6 +24,18 @@ export class BoardService {
             tasks: {
               orderBy: { position: "asc" },
               include: {
+                createdBy:{
+                  select: {
+                    name: true,
+                    email: true,
+                  }
+                },
+                assignedTo: {
+                  select: {
+                    name: true,
+                    email: true
+                  }
+                },
                 subtasks: {
                   orderBy: { position: "asc" }
                 }
